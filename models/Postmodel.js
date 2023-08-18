@@ -20,6 +20,14 @@ const postSchema = new Schema(
             type: String,
             required: [true, "Description required"]
         },
+        likes: {
+            type: Map,
+            of: Boolean //value
+        },
+        comments: {
+            type: Array,
+            default: []
+        },
         author: {
             type: Schema.Types.ObjectId,
             ref: "User"

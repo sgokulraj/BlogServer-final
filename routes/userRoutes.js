@@ -7,10 +7,10 @@ const router = express.Router()
 
 router.post("/signup", async (req, res) => {
     try {
-        const { username, email, password } = req.body
+        const { username, email, password, mobile, gender, images: profilephoto } = req.body
         const salt = await bcrypt.genSalt();
         const passwordHash = await bcrypt.hash(password, salt);
-        const user = await User.create({ username, email, password: passwordHash });
+        const user = await User.create({ username, email, mobile, gender, profilephoto, password: passwordHash });
         res.status(201).json(user)
     } catch (error) {
         if (error.code === 11000) {
@@ -53,8 +53,8 @@ router.get("/:id", async (req, res) => {
 router.patch("/:id", async (req, res) => {
     try {
         const { id } = req.params;
-        const { username, email } = req.body
-        const updatedUser = await User.findByIdAndUpdate(id, { username, email })
+        const { username, email, mobile, gender, images: profilephoto } = req.body
+        const updatedUser = await User.findByIdAndUpdate(id, { username, email, mobile, gender, profilephoto })
         const getUpdatedUser = await User.findById(id)
         res.status(200).json(getUpdatedUser)
     } catch (error) {
@@ -62,20 +62,18 @@ router.patch("/:id", async (req, res) => {
     }
 })
 
+
 router.delete("/:id", async (req, res) => {
     try {
-        const { id } = req.params;
-        const getUser = await User.findById(id)
-        const userPosts = getUser.posts
-        console.log(userPosts);
-        for (let i = 0; i < userPosts.length; i++) {
-            const postId = JSON.stringify(userPosts[i])
-            await Post.findByIdAndDelete(postId)
-        }
+        const { id } = req.params
+        const user = await User.findById(id).populate('posts')
+        user.posts.map(async (post) => {
+            await Post.findByIdAndDelete(post._id)
+        })
         await User.findByIdAndDelete(id)
-        res.status(200).json("Deleted Successfully")
-    } catch (error) {
-        res.status(400).send(error.message);
+        res.send("user deleted successfully")
+    } catch (err) {
+        res.status(400).send(err.message);
     }
 })
 

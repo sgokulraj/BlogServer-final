@@ -17,6 +17,18 @@ const userSchema = new Schema({
         required: [true, "email is required"],
         unique: true,
     },
+    mobile: {
+        type: Number,
+        required: [true, "Mobile number is required"]
+    },
+    gender: {
+        type: String,
+        required: [true, "Gender is required"]
+    },
+    profilephoto:{
+        type: Array,
+        required: true
+    },
     posts: [{
         type: Schema.Types.ObjectId, ref: "Post"
     }]
