@@ -102,8 +102,8 @@ router.patch("/:id/likes", async (req, res) => {
             { likes: post.likes },
             { new: true } // to return the updated value 
         );
-        const updatedposts = await Post.find()
-        res.status(200).json(updatedposts)
+        // const updatedposts = await Post.find()
+        res.status(200).json(updatePost)
 
     } catch (error) {
         res.status(400).send(error.message)
@@ -116,9 +116,9 @@ router.patch("/:id/comments", async (req, res) => {
         const { loggedUser, username, email, comment } = req.body;
         const post = await Post.findById(id);
         post.comments.push({ loggedUser, username, email, comment })
-        const updatedpost = await Post.findByIdAndUpdate(id, { comments: post.comments })
-        const updatedposts = await Post.find()
-        res.status(200).json(updatedposts)
+        const updatedpost = await Post.findByIdAndUpdate(id, { comments: post.comments }, { new: true })
+        // const updatedposts = await Post.find()
+        res.status(200).json(updatedpost)
 
     } catch (error) {
         res.status(400).send(error.message)
